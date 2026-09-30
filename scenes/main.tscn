@@ -1,0 +1,105 @@
+[gd_scene load_steps=11 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/player.tscn" id="1_player"]
+[ext_resource type="Script" path="res://scripts/world.gd" id="2_world"]
+[ext_resource type="Script" path="res://scripts/terrain.gd" id="3_terrain"]
+[ext_resource type="Script" path="res://scripts/scatter.gd" id="4_scatter"]
+[ext_resource type="Script" path="res://scripts/hud.gd" id="5_hud"]
+
+[sub_resource type="ProceduralSkyMaterial" id="sky_mat"]
+sky_top_color = Color(0.25, 0.48, 0.85, 1)
+sky_horizon_color = Color(0.72, 0.82, 0.9, 1)
+ground_bottom_color = Color(0.11, 0.25, 0.38, 1)
+ground_horizon_color = Color(0.5, 0.63, 0.73, 1)
+sun_angle_max = 12.0
+sun_curve = 0.2
+
+[sub_resource type="Sky" id="sky"]
+sky_material = SubResource("sky_mat")
+
+[sub_resource type="Environment" id="env"]
+background_mode = 2
+sky = SubResource("sky")
+ambient_light_source = 3
+ambient_light_sky_contribution = 0.65
+tonemap_mode = 2
+tonemap_white = 2.0
+ssao_enabled = false
+fog_enabled = true
+fog_light_color = Color(0.71, 0.8, 0.89, 1)
+fog_light_energy = 1.0
+fog_sun_scatter = 0.1
+fog_density = 0.0007
+fog_sky_affect = 0.15
+fog_aerial_perspective = 0.2
+
+[sub_resource type="StyleBoxFlat" id="hud_panel"]
+content_margin_left = 14.0
+content_margin_top = 10.0
+content_margin_right = 18.0
+content_margin_bottom = 12.0
+bg_color = Color(0.05, 0.07, 0.09, 0.55)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="Main" type="Node3D"]
+script = ExtResource("2_world")
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("env")
+
+[node name="Sun" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, -0.353553, 0.353553, 0, 0.707107, 0.707107, -0.5, -0.612372, 0.612372, 0, 60, 0)
+light_energy = 1.1
+shadow_enabled = true
+directional_shadow_mode = 2
+directional_shadow_split_1 = 0.06
+directional_shadow_split_2 = 0.18
+directional_shadow_split_3 = 0.45
+directional_shadow_max_distance = 220.0
+
+[node name="Terrain" type="Node3D" parent="."]
+script = ExtResource("3_terrain")
+
+[node name="Scatter" type="Node3D" parent="."]
+script = ExtResource("4_scatter")
+
+[node name="Water" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+
+[node name="Player" parent="." instance=ExtResource("1_player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, 0)
+
+[node name="HUD" type="CanvasLayer" parent="."]
+script = ExtResource("5_hud")
+
+[node name="Panel" type="PanelContainer" parent="HUD"]
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 420.0
+offset_bottom = 104.0
+theme_override_styles/panel = SubResource("hud_panel")
+
+[node name="VBox" type="VBoxContainer" parent="HUD/Panel"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="BiomeLabel" type="Label" parent="HUD/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+text = "..."
+
+[node name="InfoLabel" type="Label" parent="HUD/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.82, 0.87, 0.92, 1)
+theme_override_font_sizes/font_size = 14
+text = "..."
+
+[node name="HelpLabel" type="Label" parent="HUD/Panel/VBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.68, 0.74, 0.8, 1)
+theme_override_font_sizes/font_size = 12
+text = "..."
