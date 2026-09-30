@@ -150,12 +150,23 @@ func compute_data() -> void:
 
 
 func _run_rows(fn: Callable, count: int) -> void:
-	if use_threads:
-		var task := WorkerThreadPool.add_group_task(fn, count, -1, true, "Terrain")
-		WorkerThreadPool.wait_group_task_completion(task)
-	else:
-		for j in count:
-			fn.call(j)
+	var workers := clampi(OS.get_processor_count(), 1, 16) if use_threads else 1
+	if workers == 1:
+		_rows_worker(fn, 0, 1, count)
+		return
+	# Jeder Thread übernimmt jede n-te Zeile.
+	var threads: Array[Thread] = []
+	for k in workers:
+		var th := Thread.new()
+		th.start(_rows_worker.bind(fn, k, workers, count))
+		threads.append(th)
+	for th in threads:
+		th.wait_to_finish()
+
+
+func _rows_worker(fn: Callable, first: int, stride: int, count: int) -> void:
+	for j in range(first, count, stride):
+		fn.call(j)
 
 
 ## Eine Zeile Höhenwerte (inkl. Randstreifen) - läuft ggf. in einem Thread.
