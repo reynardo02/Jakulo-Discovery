@@ -5,49 +5,34 @@ extends SceneTree
 ## Aufruf:
 ##   godot --headless --path . --script res://tools/biome_map.gd
 
-const RES := 512   ## Pixel pro Kante der Karte
+const RES := 768   ## Pixel pro Kante der Karte
 
 
 func _initialize() -> void:
 	var t: Terrain = (load("res://scripts/terrain.gd") as GDScript).new()
-	t._setup_noise()
+	var t0 := Time.get_ticks_msec()
+	t.compute_data()
+	print("Gitter berechnet in %d ms." % (Time.get_ticks_msec() - t0))
 
-	var img := Image.create(RES, RES, false, Image.FORMAT_RGB8)
+	var img := t.map_image(RES)
 	var counts := {}
 	var half := t.world_size * 0.5
 	var step := t.world_size / RES
-	var spawn := t.find_spawn()
-
 	for j in RES:
 		var z := -half + (j + 0.5) * step
 		for i in RES:
-			var x := -half + (i + 0.5) * step
-			var y := t.height_at(x, z)
-			var nrm := t.normal_at(x, z)
-			var b: int = t._classify(x, z, y, nrm.y)
+			var b: int = t.biome_at(-half + (i + 0.5) * step, z)
 			counts[b] = counts.get(b, 0) + 1
 
-			var c: Color = t.BIOME_COLORS[b]
-			if b == t.Biome.OCEAN:
-				# Wasser einfärben, Tiefe andeuten
-				var depth := clampf((t.sea_level - y) / 6.0, 0.0, 1.0)
-				c = Color(0.18, 0.38, 0.55).lerp(Color(0.06, 0.16, 0.32), depth)
-			else:
-				# Schlichtes Hillshading, damit das Relief sichtbar wird
-				var light := clampf(Vector3(0.45, 0.78, -0.45).normalized().dot(nrm), 0.0, 1.0)
-				c = c * (0.55 + 0.6 * light)
-			img.set_pixel(i, j, c)
-
 	# Startpunkt markieren
+	var spawn := t.find_spawn()
 	var sx := int((spawn.x + half) / step)
 	var sz := int((spawn.z + half) / step)
-	for dy in range(-3, 4):
-		for dx in range(-3, 4):
-			if absi(dx) + absi(dy) > 4:
+	for dy in range(-4, 5):
+		for dx in range(-4, 5):
+			if absi(dx) + absi(dy) > 5:
 				continue
-			var px := clampi(sx + dx, 0, RES - 1)
-			var py := clampi(sz + dy, 0, RES - 1)
-			img.set_pixel(px, py, Color(1, 0.1, 0.1))
+			img.set_pixel(clampi(sx + dx, 0, RES - 1), clampi(sz + dy, 0, RES - 1), Color(1, 0.1, 0.1))
 
 	var out := "res://tools/biome_map.png"
 	img.save_png(out)

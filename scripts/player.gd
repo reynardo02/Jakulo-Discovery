@@ -2,7 +2,7 @@ extends CharacterBody3D
 ## Third-Person-Spieler: WASD bewegen, Maus schaut, Shift rennt, Leertaste springt.
 
 @export var walk_speed := 5.0
-@export var run_speed := 9.0
+@export var run_speed := 11.0
 @export var jump_velocity := 5.0
 @export var turn_speed := 10.0          ## wie schnell sich die Figur in Laufrichtung dreht
 @export var mouse_sensitivity := 0.003
