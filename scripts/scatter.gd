@@ -29,10 +29,11 @@ var _meshes := {}                   ## Typ -> Mesh
 var _bodies := {}                   ## Vector2i Region -> RID (statischer Physikkörper)
 var _shapes := []                   ## hält die Kollisionsformen am Leben
 var _clear_center := Vector3.ZERO
+var _blocked := {}                  ## Vector2i (4-m-Raster) -> true: hier bleibt es frei
 var _count := 0
 
 
-func generate(clear_center: Vector3) -> void:
+func generate(clear_center: Vector3, keep_free: Array[Vector3] = []) -> void:
 	_terrain = get_node_or_null(terrain_path) as Terrain
 	if _terrain == null:
 		push_error("Scatter: kein Terrain unter '%s' gefunden." % terrain_path)
@@ -40,6 +41,12 @@ func generate(clear_center: Vector3) -> void:
 	var t0 := Time.get_ticks_msec()
 	_rng.seed = scatter_seed
 	_clear_center = clear_center
+	# Rund um besondere Orte (Erfolge) nichts hinstellen.
+	for p in keep_free:
+		var c := Vector2i(floori(p.x / 4.0), floori(p.z / 4.0))
+		for dz in range(-2, 3):
+			for dx in range(-2, 3):
+				_blocked[c + Vector2i(dx, dz)] = true
 	_build_meshes()
 	_place_all()
 	_flush_buckets()
@@ -72,6 +79,8 @@ func _place_all() -> void:
 
 func _try_place(x: float, z: float) -> void:
 	if Vector2(x - _clear_center.x, z - _clear_center.z).length() < clear_radius:
+		return
+	if _blocked.has(Vector2i(floori(x / 4.0), floori(z / 4.0))):
 		return
 
 	var y := _terrain.height_at(x, z)

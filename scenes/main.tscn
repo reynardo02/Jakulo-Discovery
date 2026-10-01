@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="PackedScene" path="res://scenes/player.tscn" id="1_player"]
 [ext_resource type="Script" path="res://scripts/world.gd" id="2_world"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scripts/scatter.gd" id="4_scatter"]
 [ext_resource type="Script" path="res://scripts/hud.gd" id="5_hud"]
 [ext_resource type="Script" path="res://scripts/grass.gd" id="6_grass"]
+[ext_resource type="Script" path="res://scripts/achievements.gd" id="7_achievements"]
 
 [sub_resource type="ProceduralSkyMaterial" id="sky_mat"]
 sky_top_color = Color(0.25, 0.48, 0.85, 1)
@@ -74,6 +75,9 @@ script = ExtResource("4_scatter")
 
 [node name="Grass" type="Node3D" parent="."]
 script = ExtResource("6_grass")
+
+[node name="Achievements" type="Node3D" parent="."]
+script = ExtResource("7_achievements")
 
 [node name="Water" type="MeshInstance3D" parent="."]
 cast_shadow = 0

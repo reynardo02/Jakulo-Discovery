@@ -22,6 +22,7 @@ flatpak run --filesystem=home org.godotengine.Godot --path "$PWD"
 | Maus | Umsehen |
 | Mausrad | Kamera heran-/wegzoomen |
 | M | Karte ein-/ausblenden |
+| J | Erfolge anzeigen |
 | Esc | Maus freigeben |
 
 ## Die Welt
@@ -54,7 +55,26 @@ hoch und gelb in der Savanne, Schilf im Sumpf, niedrig und bräunlich in der
 Tundra. Das Gras wiegt sich im Wind.
 
 Alles wird beim Start aus einem Startwert (`noise_seed`) berechnet – dieselbe
-Zahl ergibt immer dieselbe Insel. Es wird nichts gespeichert.
+Zahl ergibt immer dieselbe Insel. Gespeichert wird nur der Erfolgsfortschritt.
+
+## Erfolge
+
+Damit sich das Erkunden lohnt, gibt es Erfolge. Beim Start sucht das Spiel
+besondere Orte auf der Insel: den **höchsten Gipfel**, die äußersten Punkte
+(**Nordkap**, **Südspitze**, **West-** und **Ostküste**) und das Herz jeder
+großen Landschaft (z. B. **Herz der Wüste**, **Tiefer Regenwald**,
+**Nebelsumpf**, **Blütental**). Jeder Ort ist mit einem Steinmännchen und einem
+leuchtenden Kristall markiert; ein blauer Lichtstrahl ist über die ganze Insel
+hinweg zu sehen. Ist ein Ort gefunden, wird der Strahl golden und niedrig.
+
+Erfolge gibt es außerdem fürs erste Betreten jeder Landschaft, für zurückgelegte
+Strecken (1, 5 und 15 km), große Höhe, Kälte unter −5 °C, Hitze über 32 °C,
+fürs Baden und dafür, alle Landschaften bzw. alle Orte entdeckt zu haben.
+
+Neue Erfolge werden oben eingeblendet, **J** zeigt die ganze Liste, auf der
+Karte (**M**) sind die Orte als Rauten eingezeichnet. Der Fortschritt wird pro
+Insel in `user://erfolge.cfg` gespeichert – diese Datei löschen, um von vorn zu
+beginnen.
 
 ## Aufbau
 
@@ -66,7 +86,8 @@ scripts/scatter.gd      verteilt Bäume, Büsche, Kakteen und Felsen je nach Lan
 scripts/grass.gd        Gras, Schilf und Blumen in Zellen rund um die Kamera
 scripts/world.gd        Ablauf beim Start, Wasserfläche, Weltgrenzen
 scripts/player.gd       Bewegung und Kamera
-scripts/hud.gd          Anzeige, Ladehinweis und Karte
+scripts/achievements.gd besondere Orte, Erfolge, Speicherstand
+scripts/hud.gd          Anzeige, Ladehinweis, Karte, Erfolgs-Einblendungen und -Liste
 shaders/terrain.gdshader  Bodenstruktur über den Biomfarben
 shaders/water.gdshader    Wellen, Tiefenfarbe, Uferschaum
 shaders/grass.gdshader    Wind und weiches Ausblenden des Grases
@@ -127,7 +148,6 @@ flatpak run --filesystem=home org.godotengine.Godot --path "$PWD" res://tools/sh
 
 * Schwimmen statt Laufen unter Wasser
 * Tag-/Nachtwechsel über eine animierte Sonne
-* Fundstücke oder Aussichtspunkte, die das Erkunden belohnen
 * Detailstufen (LOD) für weit entfernte Gelände-Chunks, falls die Welt noch
   deutlich wachsen soll
 * Wind auch in den Baumkronen

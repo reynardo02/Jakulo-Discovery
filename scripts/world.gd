@@ -11,6 +11,7 @@ signal world_ready
 @onready var player: CharacterBody3D = $Player
 @onready var water: MeshInstance3D = $Water
 @onready var hud: Hud = $HUD
+@onready var achievements: Achievements = $Achievements
 
 
 func _ready() -> void:
@@ -22,7 +23,8 @@ func _ready() -> void:
 	var t0 := Time.get_ticks_msec()
 	terrain.generate()
 	var spawn := terrain.find_spawn()
-	scatter.generate(spawn)
+	var places := achievements.find_landmarks()
+	scatter.generate(spawn, places)
 	grass.start(spawn)
 
 	player.global_position = spawn + Vector3.UP * 1.0
@@ -36,7 +38,8 @@ func _ready() -> void:
 	water.mesh = plane
 
 	_build_world_bounds()
-	hud.world_ready()
+	achievements.start()
+	hud.world_ready(achievements)
 	print("Welt bereit in %d ms. Start bei %s (%s)." % [
 		Time.get_ticks_msec() - t0, spawn.round(),
 		terrain.biome_name(terrain.biome_at(spawn.x, spawn.z))])
