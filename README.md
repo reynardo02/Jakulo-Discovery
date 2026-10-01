@@ -18,7 +18,8 @@ flatpak run --filesystem=home org.godotengine.Godot --path "$PWD"
 | --- | --- |
 | W A S D | Laufen (relativ zur Kamera) |
 | Shift | Rennen |
-| Leertaste | Springen |
+| Leertaste | Springen – in der Luft ein zweites Mal, an Wänden und steilen Hängen immer |
+| R | Befreien: zum nächsten freien, ebenen Platz |
 | Maus | Umsehen |
 | Mausrad | Kamera heran-/wegzoomen |
 | M | Karte ein-/ausblenden |

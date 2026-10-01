@@ -34,7 +34,7 @@ var _journal_list: VBoxContainer
 func _ready() -> void:
 	_terrain = get_node_or_null(terrain_path) as Terrain
 	_player = get_node_or_null(player_path) as Node3D
-	_help_label.text = "WASD laufen · Shift rennen · Leertaste springen · Maus schauen · Mausrad zoomen · M Karte · J Erfolge · Esc Maus frei"
+	_help_label.text = "WASD laufen · Shift rennen · Leertaste springen (2× in der Luft, auch an Wänden) · R befreien · Maus schauen · Mausrad zoomen · M Karte · J Erfolge · Esc Maus frei"
 	_panel.visible = false
 
 
@@ -109,6 +109,8 @@ func _refresh() -> void:
 		p.x, p.z, p.y, _terrain.celsius_at(p.x, p.z)]
 	if _achievements:
 		_info_label.text += "\nErfolge %d / %d" % [_achievements.unlocked_count(), _achievements.total()]
+	if _player.has_method("stuck_seconds") and _player.call("stuck_seconds") > 2.5:
+		_info_label.text += "\nFestgesteckt? Springen (auch an Wänden, 2× in der Luft) oder R drücken"
 
 
 # --------------------------------------------------------------------------
